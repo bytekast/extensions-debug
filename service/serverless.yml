@@ -1,0 +1,39 @@
+service: service
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-east-1
+  stage: dev
+  environment:
+    LOG_API_ENDPOINT: ${cf:${self:service}-${self:provider.stage}.ServiceEndpoint}
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - http:
+          path: /hello
+          method: get
+    layers:
+      - arn:aws:lambda:us-east-1:295279419433:layer:serverless-extension:7
+  logs:
+    handler: handler.logs
+    events:
+      - http:
+          path: /logs
+          method: post
+          async: true
+
+resources:
+  Outputs:
+    ApiUrl:
+      Description: "Logs API Base Url"
+      Value:
+        Fn::Join:
+          - ""
+          - - "https://"
+            - Ref: ApiGatewayRestApi
+            - ".execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}"
+

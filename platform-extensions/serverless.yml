@@ -1,0 +1,21 @@
+service: serverless-extension
+provider:
+  name: aws
+  region: us-east-1
+  stage: dev
+
+layers:
+  serverless-extension:
+    path: src
+    compatibleRuntimes:
+      - nodejs10.x
+      - nodejs12.x
+    allowedAccounts:
+      - '*'
+    retain: false
+
+resources:
+  Resources:
+    ServerlessDashextensionLambdaLayer:
+      Type: AWS::Lambda::LayerVersion
+      UpdateReplacePolicy: Retain
